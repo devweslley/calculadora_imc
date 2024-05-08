@@ -36,62 +36,155 @@ const data = [
       obesity: "III",
     },
   ];
+  
+  // Seleção de elementos
+  const imcTable = document.querySelector("#imc-table");
+  
+  const heightInput = document.querySelector("#height");
+  const weightInput = document.querySelector("#weight");
+  const calcBtn = document.querySelector("#calc-btn");
+  const clearBtn = document.querySelector("#clear-btn");
+  
+  const calcContainer = document.querySelector("#calc-container");
+  const resultContainer = document.querySelector("#result-container");
+  
+  const imcNumber = document.querySelector("#imc-number span");
+  const imcInfo = document.querySelector("#imc-info span");
 
-// Seleção de elementos
-const imcTable = document.querySelector('#imc-table');
-const heigthInput = document.querySelector('#heigth')
-const weigthInput = document.querySelector('#weigth')
-const calcBtn = document.querySelector('#calc-btn');
-const clearBtn = document.querySelector('#clear-btn');
-
-// Funções
-function createTable(data){
-    data.array.forEach((item) => {
-        
-        const div = document.createElement('div');
-
-        div.classList.add('table-data');
-        const classification = document.createElement('p');
-        classification.innerText = item.classification;
-
-        div.classList.add('table-data');
-        const info = document.createElement('p')
-        info.innerText = item.info;
-
-        div.classList.add('table-data');
-        const obesity = document.createElement('p');
-        obesity.innerText = item.obesity;
-
-        div.appendChild(classification);
-        div.appendChild(info);
-        div.appendChild(obesity);
-
-        imcTable.appendChild(div)
+  const pesoIdeal = document.querySelector('#peso-ideal')
+  
+  const backBtn = document.querySelector("#back-btn");
+  
+  // Funções
+  function createTable(data) {
+    data.forEach((item) => {
+      const div = document.createElement("div");
+      div.classList.add("table-data");
+  
+      const classification = document.createElement("p");
+      classification.innerText = item.classification;
+  
+      const info = document.createElement("p");
+      info.innerText = item.info;
+  
+      const obesity = document.createElement("p");
+      obesity.innerText = item.obesity;
+  
+      div.appendChild(classification);
+      div.appendChild(info);
+      div.appendChild(obesity);
+  
+      imcTable.appendChild(div);
     });
-}
-
-function cleanInputs(){
-    heigth.value = ''
-    weigth.value = ''
-}
-
-function validDigits(text){
-    return text.replace(/[^0-9,]/g, '');
-}
-
-// Inicialização
-createTable(data);
-
-// Eventos
-[heigthInput, weigthInput].forEach((el) => {
-    el.addEventListener('input', (e) =>{
-        const updateValue = validDigits(e.target.value);
-
-        e.target.value = updateValue;
+  }
+  
+  
+  function calcImc(height, weight) {
+    const imc = (weight / ((height / 100) * (height / 100))).toFixed(2);
+    return imc;
+  }
+  
+  function cleanInputs() {
+    heightInput.value = "";
+    weightInput.value = "";
+    imcNumber.className = "";
+    imcInfo.className = "";
+  }
+  
+  function showOrHideResults() {
+    calcContainer.classList.toggle("hide");
+    resultContainer.classList.toggle("hide");
+  }
+  
+  // Init
+  createTable(data);
+  
+  // Eventos
+  [heightInput, weightInput].forEach((el) => {
+    el.addEventListener("input", (e) => {
+      const updatedValue = validDigits(e.target.value);
+  
+      e.target.value = updatedValue;
     });
-})
-
-clearBtn.addEventListener('click', (e) => {
+  });
+  
+  calcBtn.addEventListener("click", (e) => {
     e.preventDefault();
+  
+    const weight = +weightInput.value.replace(/[.,]/g, '');
+    const height = +heightInput.value.replace(/[.,]/g, '');
+
+    console.log(weight, height);
+  
+    if (!weight || !height) return;
+  
+    const imc = calcImc(height, weight);
+    let info;
+  
+    data.forEach((item) => {
+      if (imc >= item.min && imc <= item.max) {
+        info = item.info;
+      }
+    });
+  
+    if (!info) return;
+  
+    imcNumber.innerText = imc;
+    imcInfo.innerText = info;
+
+    var weightMin = 18.5 * ((height / 100) * (height / 100));
+    var weightMax = 25 * ((height / 100) * (height / 100));
+
+    if (imc < 18.5){
+        pesoIdeal.innerHTML = 'Você está abaixo do peso!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
+        pesoIdeal.style.color = '#dbce12'
+    } else if (imc < 25){
+        pesoIdeal.innerHTML = 'Muito bem, continue assim!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
+        pesoIdeal.style.color = '#12db34'
+    } else if (imc < 30){
+        pesoIdeal.innerHTML = 'É melhor tomar cuidado!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
+        pesoIdeal.style.color = '#dbce12'
+    } else if (imc < 35){
+        pesoIdeal.innerHTML = 'Você precisa emagrecer!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
+        pesoIdeal.style.color = '#db6212'
+    } else {
+        pesoIdeal.innerHTML = 'ATENÇÃO: Procure um médico!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
+        pesoIdeal.style.color = '#db6212'
+    }
+
+    switch (info) {
+      case "Magreza":
+        imcNumber.classList.add("low");
+        imcInfo.classList.add("low");
+        break;
+      case "Normal":
+        imcNumber.classList.add("good");
+        imcInfo.classList.add("good");
+        break;
+      case "Sobrepeso":
+        imcNumber.classList.add("low");
+        imcInfo.classList.add("low");
+        break;
+      case "Obesidade":
+        imcNumber.classList.add("medium");
+        imcInfo.classList.add("medium");
+        break;
+      case "Obesidade grave":
+        imcNumber.classList.add("high");
+        imcInfo.classList.add("high");
+        break;
+    }
+  
+    showOrHideResults();
+  });
+  
+  clearBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+  
     cleanInputs();
-})
+  });
+  
+  backBtn.addEventListener("click", (e) => {
+    cleanInputs();
+    showOrHideResults();
+  });
