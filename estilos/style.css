@@ -151,6 +151,12 @@
   #back-btn {
     align-self: center;
   }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    
+  }
   
   .good {
     color: #12db34;
