@@ -147,6 +147,9 @@ const data = [
     } else if (imc < 35){
         pesoIdeal.innerHTML = 'Você precisa emagrecer!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
         pesoIdeal.style.color = '#db6212'
+    } else if(imc < 40){
+      pesoIdeal.innerHTML = 'Você precisa emagrecer!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
+      pesoIdeal.style.color = '#db6212'
     } else {
         pesoIdeal.innerHTML = 'ATENÇÃO: Procure um médico!!! <br>Seu peso ideal é entre ' + weightMin.toFixed(2) + ' Kg e ' +weightMax.toFixed(2) + ' Kg !!!';
         pesoIdeal.style.color = '#db6212'
